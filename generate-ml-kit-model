@@ -1,0 +1,18 @@
+#!/usr/bin/env python
+
+import logging
+
+import tensorflow as tf
+
+logging.basicConfig()
+logging.getLogger().setLevel(logging.DEBUG)
+
+"""
+Converts a keras_model files to a tflite model using TFLiteConverter
+"""
+
+if __name__ == '__main__':
+    keras_file = "keras_model.h5"
+    converter = tf.contrib.lite.TFLiteConverter.from_keras_model_file(keras_file)
+    tflite_model = converter.convert()
+    open("converted_model.tflite", "wb").write(tflite_model)
