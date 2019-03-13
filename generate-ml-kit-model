@@ -12,7 +12,29 @@ Converts a keras_model files to a tflite model using TFLiteConverter
 """
 
 if __name__ == '__main__':
-    keras_file = "keras_model.h5"
-    converter = tf.contrib.lite.TFLiteConverter.from_keras_model_file(keras_file)
-    tflite_model = converter.convert()
-    open("converted_model.tflite", "wb").write(tflite_model)
+    model_names = ("Emilio", "Todd", "Krazy8", "Junior")
+
+    # ModelType.Krazy8: 'krazy8trainer-388c1ad134b6fa1a8f6bee22fccb2037',
+    # ModelType.SkinnyPete: 'c57a72d4333e6d22d740bd38f1bf6532',
+    # ModelType.Emilio: 'emiliotrainer-177070ecf90c56125c5436be170be1fc',
+    # ModelType.Todd: 'toddtrainer-af2802728e1fbaff153c7c2c07b02f42',
+    # ModelType.Junior: 'juniortrainer-322353f43c18611c58c3be6a76e7601b'
+
+    for model_name in model_names:
+        keras_file = f"{model_name}.h5"
+        converter = tf.contrib.lite.TFLiteConverter.from_keras_model_file(keras_file)
+        tflite_model = converter.convert()
+        output_file_name = f"{model_name}.tflite"
+        open(output_file_name, "wb").write(tflite_model)
+
+        print('model_name')
+        interpreter = tf.contrib.lite.Interpreter(model_path=output_file_name)
+        interpreter.allocate_tensors()
+
+        # Print input shape and type
+        print(interpreter.get_input_details()[0]['shape'])  # Example: [1 224 224 3]
+        print(interpreter.get_input_details()[0]['dtype'])  # Example: <class 'numpy.float32'>
+
+        # Print output shape and type
+        print(interpreter.get_output_details()[0]['shape'])  # Example: [1 224 224 3]
+        print(interpreter.get_input_details()[0]['dtype'])  # Example: <class 'numpy.float32'>
